@@ -1,0 +1,82 @@
+﻿@namespace AntDesign
+
+
+<div class="ant-transfer-list @((FooterTemplate != null || Footer != null)?FooterClass:"")" @onscroll="@(e=>HandleScroll(TransferDirection.Left,e))" style="@Style">
+    <div class="ant-transfer-list-header">
+        @if (ShowSelectAll)
+        {
+            <Checkbox Checked="_leftCheckAllState" Indeterminate="_leftCheckAllIndeterminate" Disabled="@Disabled" CheckedChange="@(checkedState => SelectAll(checkedState, TransferDirection.Left))" />
+        }
+        <span class="ant-transfer-list-header-selected">
+            @_leftCountText
+        </span>
+        @if (Titles[0] != "")
+        {
+            <span class="ant-transfer-list-header-title">@Titles[0]</span>
+        }
+    </div>
+    <div class="ant-transfer-list-body @(ShowSearch ? "ant-transfer-list-body-with-search" : "")">
+        @if (ShowSearch)
+        {
+            <div class="ant-transfer-list-body-search-wrapper">
+                <div>
+                    <Input Class="ant-transfer-list-search" Value="@_filterValue" Placeholder="@Transfer?.Locale.SearchPlaceholder" OnInput="@(e => HandleSearch(e, TransferDirection.Left))" TValue="string" />
+                    <a class="ant-transfer-list-search-action">
+                        @if (string.IsNullOrEmpty(_filterValue))
+                        {
+                            <Icon Type="search" />
+                        }
+                        else
+                        {
+                            <Icon Type="close-circle" />
+                        }
+                    </a>
+                </div>
+            </div>
+        }
+        @if (DataSource?.Any()!=true)
+        {
+            <div class="ant-transfer-list-body-not-found">
+                <Empty Simple Small />
+            </div>
+        }
+        else
+        {
+            <ul class="ant-transfer-list-content ng-star-inserted">
+                @foreach (var item in _leftDataSource)
+                {
+                    <li @key="item" class="ant-transfer-list-content-item ng-star-inserted @(item.Disabled || Disabled ? DisabledClass : "")">
+                        <Checkbox Label="@item.Key" Checked="_sourceSelectedKeys.Contains(item.Key)" CheckedChange="@(checkedState => SelectItem(checkedState, TransferDirection.Left, item.Key))" Disabled="@(item.Disabled || Disabled)">
+                            @if (Render == null)
+                            {
+                                @item.Title
+                            }
+                            else
+                            {
+                                var text = Render(item);
+                                @if (text.IsT0)
+                                {
+                                    @text.AsT0
+                                }
+                                else
+                                {
+                                    @text.AsT1
+                                }
+                            }
+                        </Checkbox>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+    <div class="ant-transfer-list-footer">
+        @if (FooterTemplate != null)
+        {
+            @FooterTemplate
+        }
+        else
+        {
+            @Footer
+        }
+    </div>
+</div>
