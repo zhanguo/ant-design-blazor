@@ -40,6 +40,9 @@ namespace AntDesign
         public Func<TData, TData, int> SorterCompare { get; set; }
 
         [Parameter]
+        public Func<object, int> ExpendingData { get; set; }
+
+        [Parameter]
         public int SorterMultiple { get; set; }
 
         [Parameter]
@@ -191,6 +194,7 @@ namespace AntDesign
 
         private void ToggleTreeNode()
         {
+            ExpendingData?.Invoke(RowData);
             RowData.Expanded = !RowData.Expanded;
             Table?.Refresh();
         }
